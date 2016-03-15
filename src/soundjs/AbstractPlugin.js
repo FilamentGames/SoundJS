@@ -237,7 +237,10 @@ this.createjs = this.createjs || {};
 			this.preload(this.register({src: src}));
 		}
 		var si = new this._soundInstanceClass(src, startTime, duration, this._audioSources[src]);
-		this._soundInstances[src].push(si);
+		if(this._soundInstances[src]){
+			this._soundInstances[src].push(si);
+		}
+
 		return si;
 	};
 
@@ -301,7 +304,7 @@ this.createjs = this.createjs || {};
 				}
 				// ToDo consider adding play call here if playstate == playfailed
 			}
-		}
+		this._soundInstances[src] = null;
 	};
 
 	/**
