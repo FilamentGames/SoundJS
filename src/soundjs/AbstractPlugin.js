@@ -291,10 +291,13 @@ this.createjs = this.createjs || {};
 	p._handlePreloadComplete = function (event) {
 		var src = event.target.getItem().src;
 		this._audioSources[src] = event.result;
-		for (var i = 0, l = this._soundInstances[src].length; i < l; i++) {
-			var item = this._soundInstances[src][i];
-			item.setPlaybackResource(this._audioSources[src]);
-			// ToDo consider adding play call here if playstate == playfailed
+		var instances = this._soundInstances[src];
+		if (instances != null && instances.length > 0) {
+			for (var i = 0, l = instances.length; i < l; i++) {
+				var item = instances[i];
+				item.setPlaybackResource(this._audioSources[src]);
+				// ToDo consider adding play call here if playstate == playfailed
+			}
 		}
 	};
 
