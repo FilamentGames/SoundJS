@@ -215,7 +215,7 @@ this.createjs = this.createjs || {};
 			this._sourceNodeNext = this._cleanUpAudioNode(this._sourceNodeNext);
 		}
 
-		if (this.gainNode.numberOfOutputs != 0) {this.gainNode.disconnect(0);}
+		if (this.gainNode && this.gainNode.numberOfOutputs != 0) {this.gainNode.disconnect(0);}
 		// OJR there appears to be a bug that this doesn't always work in webkit (Chrome and Safari). According to the documentation, this should work.
 
 		clearTimeout(this._soundCompleteTimeout);
