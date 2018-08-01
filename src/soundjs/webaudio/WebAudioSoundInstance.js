@@ -179,10 +179,15 @@ this.createjs = this.createjs || {};
 	p.destroy = function() {
 		this.AbstractSoundInstance_destroy();
 
-		this.panNode.disconnect(0);
-		this.panNode = null;
-		this.gainNode.disconnect(0);
-		this.gainNode = null;
+		if (this.panNode) {
+			this.panNode.disconnect(0);
+			this.panNode = null;
+		}
+		
+		if (this.gainNode) {
+			this.gainNode.disconnect(0);
+			this.gainNode = null;
+		}
 	};
 
 	p.toString = function () {
