@@ -296,6 +296,9 @@ this.createjs = this.createjs || {};
 			for (var i = 0, l = instances.length; i < l; i++) {
 				var item = instances[i];
 				item.setPlaybackResource(this._audioSources[src]);
+				if (item.playState == createjs.Sound.PLAY_FAILED) {
+					item.play();
+				}
 				// ToDo consider adding play call here if playstate == playfailed
 			}
 		}
