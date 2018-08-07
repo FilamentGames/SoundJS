@@ -400,6 +400,11 @@ this.createjs = this.createjs || {};
 			if (s.context.sampleRate !== s.DEFAULT_SAMPLE_RATE) {
 				s.context.close() // dispose old context
 				s.context = s._createAudioContext();
+				
+				//Gross hack
+				if (createjs.Sound.activePlugin) {
+					createjs.Sound.activePlugin.context = s.context;
+				}
 			}			
 		} else {
 			document.addEventListener("mousedown", s._unlock, true);
