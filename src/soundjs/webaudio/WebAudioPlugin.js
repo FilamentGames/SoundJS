@@ -292,7 +292,7 @@ this.createjs = this.createjs || {};
 			if (s.context == null) { return null; }
 		}
 		if (s._scratchBuffer == null) {
-			s._scratchBuffer = s.context.createBuffer(1, 1, 22050);
+			s._scratchBuffer = s.context.createBuffer(1, 1, s.DEFAULT_SAMPLE_RATE);
 		}
 
 		s._compatibilitySetUp();
