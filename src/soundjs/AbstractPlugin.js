@@ -302,8 +302,8 @@ this.createjs = this.createjs || {};
 				if (item.playState == createjs.Sound.PLAY_FAILED) {
 					item.play();
 				}
-				// ToDo consider adding play call here if playstate == playfailed
 			}
+		}
 		this._soundInstances[src] = null;
 	};
 
