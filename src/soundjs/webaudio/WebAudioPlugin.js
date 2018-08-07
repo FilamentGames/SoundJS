@@ -390,7 +390,6 @@ this.createjs = this.createjs || {};
 		
 		if (s.context.state == "running") {
 			document.removeEventListener("mousedown", s._unlock, true);
-			document.removeEventListener("touchstart", s._unlock, true);
 			document.removeEventListener("touchend", s._unlock, true);
 			s._unlocked = true;
 			
@@ -405,10 +404,11 @@ this.createjs = this.createjs || {};
 				if (createjs.Sound.activePlugin) {
 					createjs.Sound.activePlugin.context = s.context;
 				}
+				
+				s.playEmptySound();
 			}			
 		} else {
 			document.addEventListener("mousedown", s._unlock, true);
-			document.addEventListener("touchstart", s._unlock, true);
 			document.addEventListener("touchend", s._unlock, true);
 		}
 	};
