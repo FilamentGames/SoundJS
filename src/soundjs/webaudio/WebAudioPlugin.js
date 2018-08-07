@@ -344,21 +344,6 @@ this.createjs = this.createjs || {};
 		var AudioCtor = (window.AudioContext || window.webkitAudioContext),
 				context = new AudioCtor();
 
-		// Check if hack is necessary. Only occurs in iOS6+ devices
-		// and only when you first boot the iPhone, or play a audio/video
-		// with a different sample rate
-		if (/(iPhone|iPad)/i.test(navigator.userAgent)
-				&& context.sampleRate !== s.DEFAULT_SAMPLE_RATE) {
-			var buffer = context.createBuffer(1, 1, s.DEFAULT_SAMPLE_RATE),
-					dummy = context.createBufferSource();
-			dummy.buffer = buffer;
-			dummy.connect(context.destination);
-			dummy.start(0);
-			dummy.disconnect();
-			context.close() // dispose old context
-
-			context = new AudioCtor();
-		}
 		return context;
 	}
 
@@ -404,7 +389,25 @@ this.createjs = this.createjs || {};
 	 */
 	s._unlock = function() {
 		if (s._unlocked) { return; }
+				
+		// Check if hack is necessary. Only occurs in iOS6+ devices
+		// and only when you first boot the iPhone, or play a audio/video
+		// with a different sample rate
+		if (/(iPhone|iPad)/i.test(navigator.userAgent)
+				&& s.context.sampleRate !== s.DEFAULT_SAMPLE_RATE) {
+			var buffer = s.context.createBuffer(1, 1, s.DEFAULT_SAMPLE_RATE),
+					dummy = s.context.createBufferSource();
+			dummy.buffer = buffer;
+			dummy.connect(s.context.destination);
+			dummy.start(0);
+			dummy.disconnect();
+			s.context.close() // dispose old context
+
+			s.context = s._createAudioContext();
+		}
+		
 		s.playEmptySound();
+		
 		if (s.context.state == "running") {
 			document.removeEventListener("mousedown", s._unlock, true);
 			document.removeEventListener("touchend", s._unlock, true);
