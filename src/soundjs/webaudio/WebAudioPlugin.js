@@ -85,7 +85,7 @@ this.createjs = this.createjs || {};
 		 * @type {Number / String}
 		 * @protected
 		 */
-		this._panningModel = s._panningModel;;
+		this._panningModel = s._panningModel;
 
 		/**
 		 * The web audio context, which WebAudio uses to play audio. All nodes that interact with the WebAudioPlugin
@@ -399,10 +399,16 @@ this.createjs = this.createjs || {};
 			if (s.context.sampleRate !== s.DEFAULT_SAMPLE_RATE) {
 				s.context.close() // dispose old context
 				s.context = s._createAudioContext();
+				var activePlugin = createjs.Sound.activePlugin;
 				
 				//Gross hack
-				if (createjs.Sound.activePlugin) {
-					createjs.Sound.activePlugin.context = s.context;
+				if (activePlugin) {
+					activePlugin.context = s.context;
+					activePlugin.dynamicsCompressorNode = activePlugin.context.createDynamicsCompressor();
+					activePlugin.dynamicsCompressorNode.connect(activePlugin.context.destination);
+					activePlugin.gainNode = activePlugin.context.createGain();
+					activePlugin.gainNode.connect(activePlugin.dynamicsCompressorNode);
+					activePlugin._addPropsToClasses();
 				}
 				
 				s.playEmptySound();
