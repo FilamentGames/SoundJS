@@ -237,6 +237,7 @@ this.createjs = this.createjs || {};
 		source.buffer = s._scratchBuffer;
 		source.connect(s.context.destination);
 		source.start(0, 0, 0);
+		source.disconnect();
 	};
 
 
@@ -396,9 +397,11 @@ this.createjs = this.createjs || {};
 			// Check if hack is necessary. Only occurs in iOS6+ devices
 			// and only when you first boot the iPhone, or play a audio/video
 			// with a different sample rate
-			if (s.context.sampleRate !== s.DEFAULT_SAMPLE_RATE) {
+			if (s.context.sampleRate < 23000) {
 				s.context.close() // dispose old context
 				s.context = s._createAudioContext();
+				s._scratchBuffer = s.context.createBuffer(1, 1, s.DEFAULT_SAMPLE_RATE);
+				
 				var activePlugin = createjs.Sound.activePlugin;
 				
 				//Gross hack
