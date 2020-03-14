@@ -196,7 +196,7 @@ this.createjs = this.createjs || {};
 	 * @default 44100
 	 * @static
 	 */
-	s.DEFAULT_SAMPLE_RATE = 44100;
+	s.DEFAULT_SAMPLE_RATE = 48000;
 
 // Static Public Methods
 	/**
@@ -295,7 +295,19 @@ this.createjs = this.createjs || {};
 		if (s._scratchBuffer == null) {
 			s._scratchBuffer = s.context.createBuffer(1, 1, s.DEFAULT_SAMPLE_RATE);
 		}
-
+		
+		
+		// Check if hack is necessary. Only occurs in iOS6+ devices
+		// and only when you first boot the iPhone, or play a audio/video
+		// with a different sample rate
+		var limit = 10;
+		while (s.context.sampleRate < 25000 && limit--) {
+			s.context.close() // dispose old context
+			s.context = s._createAudioContext();
+			s._scratchBuffer = s.context.createBuffer(1, 1, s.DEFAULT_SAMPLE_RATE);
+			s.playEmptySound();
+		}
+	
 		s._compatibilitySetUp();
 
 		// Listen for document level clicks to unlock WebAudio on iOS. See the _unlock method.
@@ -387,35 +399,14 @@ this.createjs = this.createjs || {};
 	s._unlock = function() {
 		if (s._unlocked) { return; }
 		
-		s.playEmptySound();
+		if (s.context.state != "running") {
+			s.context.resume();
+		}
 		
 		if (s.context.state == "running") {
 			document.removeEventListener("mousedown", s._unlock, true);
 			document.removeEventListener("touchend", s._unlock, true);
 			s._unlocked = true;
-			
-			// Check if hack is necessary. Only occurs in iOS6+ devices
-			// and only when you first boot the iPhone, or play a audio/video
-			// with a different sample rate
-			if (s.context.sampleRate < 23000) {
-				s.context.close() // dispose old context
-				s.context = s._createAudioContext();
-				s._scratchBuffer = s.context.createBuffer(1, 1, s.DEFAULT_SAMPLE_RATE);
-				
-				var activePlugin = createjs.Sound.activePlugin;
-				
-				//Gross hack
-				if (activePlugin) {
-					activePlugin.context = s.context;
-					activePlugin.dynamicsCompressorNode = activePlugin.context.createDynamicsCompressor();
-					activePlugin.dynamicsCompressorNode.connect(activePlugin.context.destination);
-					activePlugin.gainNode = activePlugin.context.createGain();
-					activePlugin.gainNode.connect(activePlugin.dynamicsCompressorNode);
-					activePlugin._addPropsToClasses();
-				}
-				
-				s.playEmptySound();
-			}			
 		} else {
 			document.addEventListener("mousedown", s._unlock, true);
 			document.addEventListener("touchend", s._unlock, true);
